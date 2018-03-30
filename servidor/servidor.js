@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
-
+//comentario de prueba
 // app.get('/peliculas?', controlador.buscarTodasLasPeliculas);
 //
 // app.get('/peliculas/:id', controlador.buscarInformacionPelicula);
