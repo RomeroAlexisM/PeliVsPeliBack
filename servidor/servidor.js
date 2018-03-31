@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({
 
 app.use(bodyParser.json());
 
-app.get('/competencias', controlador.buscarTodasLasCompetencias);
+app.get('/competencias', competenciasController.buscarTodasLasCompetencias);
 //
 // app.get('/peliculas/:id', controlador.buscarInformacionPelicula);
 //
