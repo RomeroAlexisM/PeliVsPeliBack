@@ -2,7 +2,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
-var controlador = require('../servidor/controladores/controlador.js');
+var controlador = require('../servidor/controladores/competenciasController.js');
 var app = express();
 
 app.use(cors());
@@ -12,8 +12,8 @@ app.use(bodyParser.urlencoded({
 }));
 
 app.use(bodyParser.json());
-//comentario de prueba
-// app.get('/peliculas?', controlador.buscarTodasLasPeliculas);
+
+app.get('/competencias', controlador.buscarTodasLasCompetencias);
 //
 // app.get('/peliculas/:id', controlador.buscarInformacionPelicula);
 //
