@@ -1,5 +1,5 @@
 // Esta es la ip y puerto en que necesitamos que esté el backend disponible
-var server = 'http://0.0.0.0:8080';
+var server = 'http://localhost:8080';
 
 function CompetenciasController () {
 
@@ -34,7 +34,7 @@ function CompetenciasController () {
 			// Se coloca el nombre de cada competencia
 			$(divCompetencia).find('.titulo').text(data[i].nombre);
 			$(divCompetencia).find('.card').addClass('color'+idColor);
-			
+
 			if (idColorCrece){
 				idColor++;
 			} else {
