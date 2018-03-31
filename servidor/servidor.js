@@ -14,9 +14,9 @@ app.use(bodyParser.urlencoded({
 app.use(bodyParser.json());
 
 app.get('/competencias', controlador.buscarTodasLasCompetencias);
-//
-// app.get('/peliculas/:id', controlador.buscarInformacionPelicula);
-//
+
+app.get('/competencias/:id/peliculas/', controlador.obtenerPeliculasAleatorias);
+
 
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
