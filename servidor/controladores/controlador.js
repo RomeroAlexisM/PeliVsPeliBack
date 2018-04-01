@@ -21,11 +21,17 @@ function obtenerPeliculasAleatorias(req, res){
       console.log("Hubo un error en la consulta", error.message);
       return res.status(404).send("Hubo un error en la consulta");
     }
-    var response = {
-      'peliculas': resultado,
-      'competencia': competenciaSeleccionada
+    if (competenciaSeleccionada != null) {
+      var response = {
+        'peliculas': resultado,
+        'competencia': competenciaSeleccionada
+      }
+      res.send(JSON.stringify(response));
+    }else {
+      console.log("La competencia no existe");
+      return res.status(404).send("La competencia no existe");
     }
-    res.send(JSON.stringify(response));
+
   });
 }
 
@@ -37,6 +43,11 @@ module.exports = {
 function buscarCompentecia(id){
   var sql = "select nombre from competencia where id="+id;
   conexion.query(sql, function(error, resultado, fields){
-    competenciaSeleccionada = resultado[0].nombre;
+    if (resultado.length == 0) {
+      competenciaSeleccionada = null;
+    }else {
+      competenciaSeleccionada = resultado[0].nombre;
+    }
+
   });
 }
