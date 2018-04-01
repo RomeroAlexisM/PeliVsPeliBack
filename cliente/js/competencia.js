@@ -87,7 +87,7 @@ function CompetenciasController () {
 	},
 	this.cargarOpciones = function (id, opciones){
 		// Se carga el nombre de la competencia en el título de la página
-		$("#nombreCompetencia").text(opciones.competencia);
+		$("#nombreCompetencia").text(opciones.competencia[0].nombre);
 		// Se recorren las opciones de películas (opciones.peliculas es un array) para votar que retornó la api
 		for (var i = 0; i < opciones.peliculas.length; i++) {
 			// Se selecciona el div que contiene la opción a cargar

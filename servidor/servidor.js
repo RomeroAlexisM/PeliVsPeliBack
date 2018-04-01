@@ -17,6 +17,10 @@ app.get('/competencias', controlador.buscarTodasLasCompetencias);
 
 app.get('/competencias/:id/peliculas/', controlador.obtenerPeliculasAleatorias);
 
+app.post('/competencias/:idCompetencia/voto', controlador.sumarVotoDePelicula);
+
+app.get('/competencias/:id/resultados', controlador.devolverResultadoVotacion);
+
 
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
