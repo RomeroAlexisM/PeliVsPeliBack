@@ -15,7 +15,7 @@ function buscarTodasLasCompetencias(req, res){
 function obtenerPeliculasAleatorias(req, res){
   var idCompetencia = req.params.id;
   var sql = "select pelicula.id, pelicula.poster, pelicula.titulo from pelicula order by rand() limit 2;";
-  buscarCompentecia(idCompetencia);
+  buscarCompentecia(idCompetencia, res);
   conexion.query(sql, function(error, resultado, fields){
     if(error){
       console.log("Hubo un error en la consulta", error.message);
@@ -27,11 +27,7 @@ function obtenerPeliculasAleatorias(req, res){
         'competencia': competenciaSeleccionada
       }
       res.send(JSON.stringify(response));
-    }else {
-      console.log("La competencia no existe");
-      return res.status(404).send("La competencia no existe");
     }
-
   });
 }
 
@@ -40,14 +36,16 @@ module.exports = {
     obtenerPeliculasAleatorias: obtenerPeliculasAleatorias
   }
 
-function buscarCompentecia(id){
+function buscarCompentecia(id, res){
   var sql = "select nombre from competencia where id="+id;
   conexion.query(sql, function(error, resultado, fields){
     if (resultado.length == 0) {
       competenciaSeleccionada = null;
+      console.log("La competencia no existe");
+      return res.status(404).send("La competencia no existe");
+
     }else {
       competenciaSeleccionada = resultado[0].nombre;
     }
-
   });
 }
