@@ -31,6 +31,10 @@ function obtenerPeliculasAleatorias(req, res){
   });
 }
 
+function sumarVotoDePelicula(req, res){
+  
+}
+
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
     obtenerPeliculasAleatorias: obtenerPeliculasAleatorias
