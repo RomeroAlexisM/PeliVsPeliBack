@@ -5,7 +5,19 @@ function buscarTodasLasCompetencias(req, res){
   buscarDatosEnBD(sql, res);
 }
 
-function buscarCompentecia(req, res){
+function buscarCompetencia(req, res){
+  var idCompetencia = req.params.id;
+  var sql = "select * from competencia where id="+idCompetencia;
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la consulta", error.message);
+      return res.status(404).send("Hubo un error en la consulta");
+    }
+    res.send(JSON.stringify(respuesta));
+  });
+}
+
+function cargarCompetencia(req, res){
   var idCompetencia = req.params.id;
   var sql = "select * from competencia where id="+idCompetencia;
   conexion.query(sql, function(error, resultado, fields){
@@ -99,14 +111,50 @@ conexion.query(sql, function(error, resultado, fields){
 });
 }
 
+function reiniciarVotacion(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var sql = "DELETE voto FROM voto INNER JOIN competencia ON voto.competencia_id = competencia.id WHERE competencia.id = "+idCompetencia ;
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la eliminacion de datos", error.message);
+      return res.status(505).send("Hubo un error en la eliminacion de datos");
+    }
+    res.json(resultado);
+  });
+}
+
 function crearCompetencia(req, res){
   var datosRecibidos = req.body;
   var nombreCompetencia = datosRecibidos.nombre;
   var actor = datosRecibidos.actor;
   var director = datosRecibidos.director;
   var genero = datosRecibidos.genero;
-  var sql = "INSERT INTO competencia (nombre, genero, actor, director) VALUES ("+"'"+nombreCompetencia+"'"+","+genero+","+actor+","+director+")";
+  var sql = crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero);
   cargarDatosEnBD(sql, res);
+}
+
+function crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero){
+  if (actor != 0) {
+    if (director != 0) {
+      if (genero != 0) {
+        return "INSERT INTO competencia (nombre, genero_id, actor_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+","+actor+","+director+")";
+      }else {
+        return "INSERT INTO competencia (nombre, actor_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+actor+","+director+")";
+      }
+    }else {
+      return "INSERT INTO competencia (nombre, actor_id) VALUES ("+"'"+nombreCompetencia+"',"+actor+")";
+    }
+  }else if (director != 0) {
+    if (genero != 0) {
+      return "INSERT INTO competencia (nombre, genero_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+","+director+")";
+    }else {
+      return "INSERT INTO competencia (nombre, director_id) VALUES ("+"'"+nombreCompetencia+"',"+director+")";
+    }
+  }else if (genero != 0) {
+    return "INSERT INTO competencia (nombre, genero_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+")";
+  }else {
+    return "INSERT INTO competencia (nombre) VALUES ("+"'"+nombreCompetencia+"')";
+  }
 }
 
 function cargarGeneros(req, res){
@@ -127,13 +175,14 @@ function cargarDirectores(req, res){
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
     // obtenerPeliculasAleatorias: obtenerPeliculasAleatorias,
-    buscarCompentecia: buscarCompentecia,
+    cargarCompetencia: cargarCompetencia,
     sumarVotoDePelicula: sumarVotoDePelicula,
     devolverResultadoVotacion: devolverResultadoVotacion,
     cargarGeneros: cargarGeneros,
     cargarActores: cargarActores,
     cargarDirectores: cargarDirectores,
-    crearCompetencia: crearCompetencia
+    crearCompetencia: crearCompetencia,
+    reiniciarVotacion: reiniciarVotacion
   }
 
   function cargarDatosEnBD(sql, res){

@@ -1,10 +1,13 @@
 CREATE TABLE `competencia` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(70) NOT NULL DEFAULT '',
-  `actor` varchar(70) NOT NULL DEFAULT '',
-  `director` varchar(70) NOT NULL DEFAULT '',
-  `genero` varchar(70) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `actor_id` int(11) unsigned,
+  `director_id` int(11) unsigned,
+  `genero_id` int(11) unsigned,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`actor_id`) REFERENCES `actor` (`id`),
+  FOREIGN KEY (`director_id`) REFERENCES `director` (`id`),
+  FOREIGN KEY (`genero_id`) REFERENCES `genero` (`id`)
 );
 
 CREATE TABLE `voto` (
