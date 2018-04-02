@@ -250,7 +250,7 @@ input,
 optgroup,
 select,
 textarea {
-  color: inherit; /* 1 */
+  color: rgba(127, 138, 125, 0.93); /* 1 */
   font: inherit; /* 2 */
   margin: 0; /* 3 */
 }

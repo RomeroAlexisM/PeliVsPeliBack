@@ -15,6 +15,14 @@ app.use(bodyParser.json());
 
 app.get('/competencias', controlador.buscarTodasLasCompetencias);
 
+// app.post('/competencias', controlador.crearCompetencia);
+//
+app.get('/generos', controlador.cargarGeneros);
+
+app.get('/actores', controlador.cargarActores);
+
+app.get('/directores', controlador.cargarDirectores);
+
 app.get('/competencias/:id/peliculas/', controlador.obtenerPeliculasAleatorias);
 
 app.post('/competencias/:idCompetencia/voto', controlador.sumarVotoDePelicula);

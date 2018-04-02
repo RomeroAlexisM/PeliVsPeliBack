@@ -62,11 +62,57 @@ conexion.query(sql, function(error, resultado, fields){
 });
 }
 
+// function crearCompetencia(req, res){
+//   var sql = "INSERT INTO competencia (nombre) VALUES ("++")";
+// }
+
+function cargarGeneros(req, res){
+  var sql = "Select * from genero";
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la consulta", error.message);
+      return res.status(404).send("Hubo un error en la consulta");
+    }
+    res.send(JSON.stringify(resultado));
+  });
+}
+
+function cargarActores(req, res){
+  var sql = "Select * from actor";
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la consulta", error.message);
+      return res.status(404).send("Hubo un error en la consulta");
+    }
+    // var response = {
+    //   'actores': resultado,
+    // }
+    res.send(JSON.stringify(resultado));
+  });
+}
+
+function cargarDirectores(req, res){
+  var sql = "Select * from director";
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la consulta", error.message);
+      return res.status(404).send("Hubo un error en la consulta");
+    }
+    // var response = {
+    //   'directores': resultado,
+    // }
+    res.send(JSON.stringify(resultado));
+  });
+}
+
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
     obtenerPeliculasAleatorias: obtenerPeliculasAleatorias,
     sumarVotoDePelicula: sumarVotoDePelicula,
-    devolverResultadoVotacion: devolverResultadoVotacion
+    devolverResultadoVotacion: devolverResultadoVotacion,
+    cargarGeneros: cargarGeneros,
+    cargarActores: cargarActores,
+    cargarDirectores: cargarDirectores
   }
 
 function guardarPeliculaOfrecida(datosPelicula){
@@ -92,19 +138,5 @@ function buscarCompentecia(id, res){
     }else {
       competenciaSeleccionada = resultado;
     }
-  });
-}
-
-function existeLaCompetencia(idCompetencia){
-  var sql = "select * from competencia where id="+idCompetencia;
-  conexion.query(sql, function(error, resultado, fields){
-    return (resultado.length != 0);
-  });
-}
-
-function existeLaPelicula(idPelicula){
-  var sql = "select * from pelicula where id="+idPelicula;
-  conexion.query(sql, function(error, resultado, fields){
-    return (resultado.length != 0);
   });
 }

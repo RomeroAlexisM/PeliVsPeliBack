@@ -18,6 +18,7 @@ $(function() {
 				$("#mensajeDeError").text(response.responseText);
 			}
 		}
+
 	});
 	// Si el usuario cancela, se redirige a index.html
 	$(".cancelar").click(function(){
