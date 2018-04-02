@@ -5,24 +5,7 @@ $(function() {
 	competenciasController.cargarGeneros();
 	competenciasController.cargarDirectores();
 	competenciasController.cargarActores();
-	// var opcion = document.getElementsByName("opcion")
-	// console.log(opcion.length);
-	// for (var i = 0; i < opcion.length; i++) {
-	// 		if (opcion[i].checked) {
-	// 			console.log(opcion[i].value);
-	// 		}
-	// }
-	// function habilitar(value)
-	// 		{
-	// 			if(value=="1")
-	// 			{
-	// 				// habilitamos
-	// 				document.getElementById("segundo").disabled=false;
-	// 			}else if(value=="2"){
-	// 				// deshabilitamos
-	// 				document.getElementById("segundo").disabled=true;
-	// 			}
-	// 		}
+
 	// Al enviarse el formulario, se debe ejecutar un POST al servidor
 	$("#formCompetencia").ajaxForm({url: server + '/competencias', type: 'post',
 		// En caso de éxito, se redirige a index.html
