@@ -3,13 +3,7 @@ var competenciaSeleccionada;
 
 function buscarTodasLasCompetencias(req, res){
   var sql = "select * from competencia";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
-    }
-    res.send(JSON.stringify(resultado));
-  });
+  buscarDatosEnBD(sql, res);
 }
 
 function obtenerPeliculasAleatorias(req, res){
@@ -36,14 +30,7 @@ function sumarVotoDePelicula(req, res){
   var idCompetencia = req.params.idCompetencia;
   var idPelicula = req.body.idPelicula;
   var sql = "INSERT INTO voto (competencia_id, pelicula_id) VALUES ("+idCompetencia+", "+idPelicula+")";
-
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la insercion de datos", error.message);
-      return res.status(505).send("Hubo un error en la insercion de datos");
-    }
-    res.json(resultado);
-  });
+  cargarDatosEnBD(sql, res);
 }
 
 function devolverResultadoVotacion(req, res){
@@ -62,47 +49,26 @@ conexion.query(sql, function(error, resultado, fields){
 });
 }
 
-// function crearCompetencia(req, res){
-//   var sql = "INSERT INTO competencia (nombre) VALUES ("++")";
-// }
+function crearCompetencia(req, res){
+  var datosRecibidos = req.body;
+  var nombreCompetencia = datosRecibidos.nombre
+  var sql = "INSERT INTO competencia (nombre) VALUES ("+"'"+nombreCompetencia+"'"+")";
+  cargarDatosEnBD(sql, res);
+}
 
 function cargarGeneros(req, res){
   var sql = "Select * from genero";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
-    }
-    res.send(JSON.stringify(resultado));
-  });
+  buscarDatosEnBD(sql, res);
 }
 
 function cargarActores(req, res){
   var sql = "Select * from actor";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
-    }
-    // var response = {
-    //   'actores': resultado,
-    // }
-    res.send(JSON.stringify(resultado));
-  });
+  buscarDatosEnBD(sql, res);
 }
 
 function cargarDirectores(req, res){
   var sql = "Select * from director";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
-    }
-    // var response = {
-    //   'directores': resultado,
-    // }
-    res.send(JSON.stringify(resultado));
-  });
+  buscarDatosEnBD(sql, res);
 }
 
 module.exports = {
@@ -112,7 +78,28 @@ module.exports = {
     devolverResultadoVotacion: devolverResultadoVotacion,
     cargarGeneros: cargarGeneros,
     cargarActores: cargarActores,
-    cargarDirectores: cargarDirectores
+    cargarDirectores: cargarDirectores,
+    crearCompetencia: crearCompetencia
+  }
+
+  function cargarDatosEnBD(sql, res){
+    conexion.query(sql, function(error, resultado, fields){
+      if(error){
+        console.log("Hubo un error en la insercion de datos", error.message);
+        return res.status(505).send("Hubo un error en la insercion de datos");
+      }
+      res.json(resultado);
+    });
+  }
+
+  function buscarDatosEnBD(sql, res){
+    conexion.query(sql, function(error, resultado, fields){
+      if(error){
+        console.log("Hubo un error en la consulta", error.message);
+        return res.status(404).send("Hubo un error en la consulta");
+      }
+      res.send(JSON.stringify(resultado));
+    });
   }
 
 function guardarPeliculaOfrecida(datosPelicula){
@@ -120,11 +107,7 @@ function guardarPeliculaOfrecida(datosPelicula){
   var idPelicula1 = datosPelicula.peliculas[0].id;
   var idPelicula2 = datosPelicula.peliculas[1].id;
   var sql = "INSERT INTO pelicula_ofrecida (competencia_id, pelicula1_id, pelicula2_id) VALUES ("+idCompetencia+", "+idPelicula1+","+idPelicula2+")";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la insercion de datos", error.message);
-    }
-  });
+  cargarDatosEnBD(sql, res)
 }
 
 function buscarCompentecia(id, res){
