@@ -1,6 +1,7 @@
 CREATE TABLE `competencia` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(70) NOT NULL DEFAULT '',
+  `estado` int(11) NOT NULL DEFAULT 1,
   `actor_id` int(11) unsigned,
   `director_id` int(11) unsigned,
   `genero_id` int(11) unsigned,
