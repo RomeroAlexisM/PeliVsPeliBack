@@ -107,7 +107,12 @@ function guardarPeliculaOfrecida(datosPelicula){
   var idPelicula1 = datosPelicula.peliculas[0].id;
   var idPelicula2 = datosPelicula.peliculas[1].id;
   var sql = "INSERT INTO pelicula_ofrecida (competencia_id, pelicula1_id, pelicula2_id) VALUES ("+idCompetencia+", "+idPelicula1+","+idPelicula2+")";
-  cargarDatosEnBD(sql, res)
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la insercion de datos", error.message);
+    }
+  });
+
 }
 
 function buscarCompentecia(id, res){
