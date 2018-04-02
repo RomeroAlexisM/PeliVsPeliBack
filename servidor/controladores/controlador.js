@@ -65,9 +65,9 @@ function crearSqlObtenerPeliculas(actor, director, genero){
 }
 
 function validarDatosCompetencia(actor, director, genero){
-  if (actor != 0) {
-    if (director != 0) {
-      if (genero != 0) {
+  if (existeElActor(actor)) {
+    if (existeElDirector(director)) {
+      if (existeElGenero(genero)) {
         return " actor.id ="+actor+" and director.id = "+director+" and genero.id = "+genero;
       }else {
         return " actor.id ="+actor+" and director.id = "+director;
@@ -75,13 +75,13 @@ function validarDatosCompetencia(actor, director, genero){
     }else {
       return " actor.id ="+actor;
     }
-  }else if (director != 0) {
-    if (genero != 0) {
+  }else if (existeElDirector(director)) {
+    if (existeElGenero(genero)) {
       return " director.id = "+director+" and genero.id = "+genero;
     }else {
       return " director.id = "+director;
     }
-  }else if (genero != 0) {
+  }else if (existeElGenero(genero)) {
     return " genero.id = "+genero;
   }else {
     return "";
@@ -134,9 +134,9 @@ function crearCompetencia(req, res){
 }
 
 function crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero){
-  if (actor != 0) {
-    if (director != 0) {
-      if (genero != 0) {
+  if (existeElActor(actor)) {
+    if (existeElDirector(director)) {
+      if (existeElGenero(genero)) {
         return "INSERT INTO competencia (nombre, genero_id, actor_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+","+actor+","+director+")";
       }else {
         return "INSERT INTO competencia (nombre, actor_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+actor+","+director+")";
@@ -144,13 +144,13 @@ function crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero){
     }else {
       return "INSERT INTO competencia (nombre, actor_id) VALUES ("+"'"+nombreCompetencia+"',"+actor+")";
     }
-  }else if (director != 0) {
-    if (genero != 0) {
+  }else if (existeElDirector(director)) {
+    if (existeElGenero(genero)) {
       return "INSERT INTO competencia (nombre, genero_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+","+director+")";
     }else {
       return "INSERT INTO competencia (nombre, director_id) VALUES ("+"'"+nombreCompetencia+"',"+director+")";
     }
-  }else if (genero != 0) {
+  }else if (existeElGenero(genero)) {
     return "INSERT INTO competencia (nombre, genero_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+")";
   }else {
     return "INSERT INTO competencia (nombre) VALUES ("+"'"+nombreCompetencia+"')";
@@ -215,5 +215,16 @@ function guardarPeliculaOfrecida(datosPelicula){
       console.log("Hubo un error en la insercion de datos", error.message);
     }
   });
+}
 
+function existeElActor(actor){
+  return (actor != 0);
+}
+
+function existeElDirector(director){
+  return (director != 0);
+}
+
+function existeElGenero(genero){
+  return (genero != 0);
 }
