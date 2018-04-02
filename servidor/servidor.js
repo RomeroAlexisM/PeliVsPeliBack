@@ -1,4 +1,5 @@
 //paquetes necesarios para el proyecto
+require('dotenv').config();
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors');
@@ -31,7 +32,11 @@ app.get('/competencias/:id/resultados', controlador.devolverResultadoVotacion);
 
 app.get('/competencias/:id', controlador.buscarCompetencia);
 
+app.put('/competencias/:idCompetencia', controlador.editarCompetencia);
+
 app.delete('/competencias/:idCompetencia/votos', controlador.reiniciarVotacion);
+
+app.delete('/competencias/:idCompetencia', controlador.eliminarCompetencia);
 
 
 

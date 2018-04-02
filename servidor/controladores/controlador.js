@@ -1,7 +1,7 @@
 var conexion = require('../baseDeDatos/conexionDB.js');
 
 function buscarTodasLasCompetencias(req, res){
-  var sql = "select * from competencia";
+  var sql = "select * from competencia where estado = 1";
   buscarDatosEnBD(sql, res);
 }
 
@@ -97,8 +97,7 @@ function obtenerPeliculasAleatorias(resultado, res){
   var director = resultado.director_id;
   var genero = resultado.genero_id;
   var nombreCompetencia = resultado.nombre;
-  var sentencia = crearSqlObtenerPeliculas(actor, director, genero);
-  var sql = "SELECT "+sentencia.select+" FROM "+sentencia.from+" where "+sentencia.where1+" and "+sentencia.where2+" ORDER BY rand() LIMIT 2";
+  var sql = crearSqlObtenerPeliculas(actor, director, genero);
   conexion.query(sql, function(error, resultado, fields){
     if(error){
       console.log("Hubo un error en la consulta", error.message);
@@ -108,48 +107,59 @@ function obtenerPeliculasAleatorias(resultado, res){
       'peliculas': resultado,
       'competencia': nombreCompetencia
     }
-    guardarPeliculaOfrecida(response);
+    // guardarPeliculaOfrecida(response);
     res.send(JSON.stringify(response));
   });
 }
 
 function crearSqlObtenerPeliculas(actor, director, genero){
-  var select = "pelicula.id, pelicula.poster, pelicula.titulo, actor.nombre, director.nombre, genero.nombre";
-  var from = "pelicula, actor, director, genero, actor_pelicula, director_pelicula";
-  var where1 = "actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and pelicula.genero_id = genero.id  and director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id";
-  var where2 = validarDatosCompetencia(actor, director, genero);
-  var sentencia = {
-    'select': select,
-    'from': from,
-    'where1': where1,
-    'where2': where2
-  }
-  return sentencia;
-}
-
-function validarDatosCompetencia(actor, director, genero){
+  var sql = " SELECT pelicula.id, pelicula.poster, pelicula.titulo ";
   if (existeElActor(actor)) {
     if (existeElDirector(director)) {
       if (existeElGenero(genero)) {
-        return " actor.id ="+actor+" and director.id = "+director+" and genero.id = "+genero;
+        return sql + ", actor.nombre, director.nombre, genero.nombre"+
+              " FROM pelicula, actor, director, genero, actor_pelicula, director_pelicula"+
+              " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
+              " pelicula.genero_id = genero.id  and director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and"+
+              " actor.id ="+actor+" and director.id = "+director+" and genero.id = "+genero;
       }else {
-        return " actor.id ="+actor+" and director.id = "+director;
+        return sql + ", actor.nombre, director.nombre"+
+              " FROM pelicula, actor, director, actor_pelicula, director_pelicula"+
+              " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
+              " director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and"+
+              " actor.id ="+actor+" and director.id = "+director;
       }
     }else if (existeElGenero(genero)) {
-      return " actor.id ="+actor+" and genero.id = "+genero;
+      return sql + ", actor.nombre, genero.nombre"+
+            " FROM pelicula, actor, genero, actor_pelicula"+
+            " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
+            " pelicula.genero_id = genero.id"+
+            " actor.id ="+actor+" and genero.id = "+genero;
     }else {
-      return " actor.id ="+actor;
+      return sql + ", actor.nombre"+
+            " FROM pelicula, actor, actor_pelicula"+
+            " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
+            " actor.id ="+actor;
     }
   }else if (existeElDirector(director)) {
     if (existeElGenero(genero)) {
-      return " director.id = "+director+" and genero.id = "+genero;
+      return sql + ", director.nombre, genero.nombre"+
+            " FROM pelicula, director, genero, director_pelicula"+
+            " WHERE pelicula.genero_id = genero.id  and director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and"+
+            " director.id = "+director+" and genero.id = "+genero;
     }else {
-      return " director.id = "+director;
+      return sql + ", director.nombre"+
+            " FROM pelicula, director, director_pelicula"+
+            " WHERE director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and "+
+            " director.id = "+director;
     }
   }else if (existeElGenero(genero)) {
-    return " genero.id = "+genero;
+    return sql + ", genero.nombre"+
+          " FROM pelicula, genero,"+
+          " WHERE pelicula.genero_id = genero.id and"+
+          " genero.id = "+genero;
   }else {
-    return "";
+    return sql + "FROM pelicula";
   }
 }
 
@@ -249,6 +259,31 @@ function cargarDirectores(req, res){
   buscarDatosEnBD(sql, res);
 }
 
+function eliminarCompetencia(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var sql = "UPDATE competencia SET estado = 0 WHERE competencia.id = "+idCompetencia;
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la minipulacion de datos", error.message);
+      return res.status(505).send("Hubo un error en la manipulacion de datos");
+    }
+    res.json(resultado);
+  });
+}
+
+function editarCompetencia(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var nuevoNombre = req.body.nombre;
+  var sql = "UPDATE competencia SET nombre = '"+nuevoNombre+"' WHERE competencia.id = "+idCompetencia;
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la minipulacion de datos", error.message);
+      return res.status(505).send("Hubo un error en la manipulacion de datos");
+    }
+    res.json(resultado);
+  });
+}
+
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
     cargarCompetencia: cargarCompetencia,
@@ -259,7 +294,9 @@ module.exports = {
     cargarDirectores: cargarDirectores,
     crearCompetencia: crearCompetencia,
     reiniciarVotacion: reiniciarVotacion,
-    buscarCompetencia: buscarCompetencia
+    buscarCompetencia: buscarCompetencia,
+    eliminarCompetencia: eliminarCompetencia,
+    editarCompetencia: editarCompetencia
   }
 
   function cargarDatosEnBD(sql, res){
