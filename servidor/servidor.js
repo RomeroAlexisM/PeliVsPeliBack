@@ -15,8 +15,8 @@ app.use(bodyParser.json());
 
 app.get('/competencias', controlador.buscarTodasLasCompetencias);
 
-// app.post('/competencias', controlador.crearCompetencia);
-//
+app.post('/competencias', controlador.crearCompetencia);
+
 app.get('/generos', controlador.cargarGeneros);
 
 app.get('/actores', controlador.cargarActores);

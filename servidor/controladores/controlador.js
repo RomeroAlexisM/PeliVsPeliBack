@@ -51,8 +51,12 @@ conexion.query(sql, function(error, resultado, fields){
 
 function crearCompetencia(req, res){
   var datosRecibidos = req.body;
-  var nombreCompetencia = datosRecibidos.nombre
-  var sql = "INSERT INTO competencia (nombre) VALUES ("+"'"+nombreCompetencia+"'"+")";
+  console.log(datosRecibidos);
+  var nombreCompetencia = datosRecibidos.nombre;
+  var actor = datosRecibidos.actor;
+  var director = datosRecibidos.director;
+  var genero = datosRecibidos.genero;
+  var sql = "INSERT INTO competencia (nombre, genero, actor, director) VALUES ("+"'"+nombreCompetencia+"'"+","+genero+","+actor+","+director+")";
   cargarDatosEnBD(sql, res);
 }
 

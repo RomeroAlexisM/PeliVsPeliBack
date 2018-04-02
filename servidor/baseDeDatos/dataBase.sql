@@ -1,10 +1,11 @@
--- CREATE TABLE `competencia` (
---   `id` int(11) NOT NULL AUTO_INCREMENT,
---   `nombre` varchar(70) NOT NULL DEFAULT '',
---   PRIMARY KEY (`id`)
--- )
---
--- INSERT INTO `competencia` VALUES (1, "Peor pelicula del año"), (2, "Mejor pelicula comica"), (3,"Pelicula màs terrorifica");
+CREATE TABLE `competencia` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `nombre` varchar(70) NOT NULL DEFAULT '',
+  `actor` varchar(70) NOT NULL DEFAULT '',
+  `director` varchar(70) NOT NULL DEFAULT '',
+  `genero` varchar(70) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+);
 
 CREATE TABLE `voto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -25,6 +26,3 @@ CREATE TABLE `pelicula_ofrecida` (
   FOREIGN KEY (`pelicula1_id`) REFERENCES `pelicula` (`id`),
   FOREIGN KEY (`pelicula2_id`) REFERENCES `pelicula` (`id`)
 );
-
-
- select  competencia.nombre, pelicula.titulo, count(voto.pelicula_id) as votos from voto, competencia, pelicula where pelicula_id = pelicula_id and pelicula_id = pelicula.id and competencia_id = competencia.id and competencia.id = 1;
