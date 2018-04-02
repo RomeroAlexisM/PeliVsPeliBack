@@ -89,9 +89,9 @@ function cargarCompetencia(req, res){
 }
 
 function obtenerPeliculasAleatorias(resultado, res){
-  var actor = resultado.actor;
-  var director = resultado.director;
-  var genero = resultado.genero;
+  var actor = resultado.actor_id;
+  var director = resultado.director_id;
+  var genero = resultado.genero_id;
   var nombreCompetencia = resultado.nombre;
   var sentencia = crearSqlObtenerPeliculas(actor, director, genero);
   var sql = "SELECT "+sentencia.select+" FROM "+sentencia.from+" where "+sentencia.where1+" and "+sentencia.where2+" ORDER BY rand() LIMIT 2";
@@ -131,6 +131,8 @@ function validarDatosCompetencia(actor, director, genero){
       }else {
         return " actor.id ="+actor+" and director.id = "+director;
       }
+    }else if (existeElGenero(genero)) {
+      return " actor.id ="+actor+" and genero.id = "+genero;
     }else {
       return " actor.id ="+actor;
     }
@@ -233,7 +235,6 @@ function cargarDirectores(req, res){
 
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
-    // obtenerPeliculasAleatorias: obtenerPeliculasAleatorias,
     cargarCompetencia: cargarCompetencia,
     sumarVotoDePelicula: sumarVotoDePelicula,
     devolverResultadoVotacion: devolverResultadoVotacion,
@@ -278,13 +279,13 @@ function guardarPeliculaOfrecida(datosPelicula){
 }
 
 function existeElActor(actor){
-  return (actor != 0);
+  return (actor != null);
 }
 
 function existeElDirector(director){
-  return (director != 0);
+  return (director != null);
 }
 
 function existeElGenero(genero){
-  return (genero != 0);
+  return (genero != null);
 }
