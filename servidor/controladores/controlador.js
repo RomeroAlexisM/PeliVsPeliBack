@@ -1,29 +1,79 @@
 var conexion = require('../baseDeDatos/conexionDB.js');
-var competenciaSeleccionada;
 
 function buscarTodasLasCompetencias(req, res){
   var sql = "select * from competencia";
   buscarDatosEnBD(sql, res);
 }
 
-function obtenerPeliculasAleatorias(req, res){
+function buscarCompentecia(req, res){
   var idCompetencia = req.params.id;
-  var sql = "select pelicula.id, pelicula.poster, pelicula.titulo from pelicula order by rand() limit 2;";
-  buscarCompentecia(idCompetencia, res);
+  var sql = "select * from competencia where id="+idCompetencia;
   conexion.query(sql, function(error, resultado, fields){
     if(error){
       console.log("Hubo un error en la consulta", error.message);
       return res.status(404).send("Hubo un error en la consulta");
     }
-    if (competenciaSeleccionada != null) {
-      var response = {
-        'peliculas': resultado,
-        'competencia': competenciaSeleccionada
-      }
-      guardarPeliculaOfrecida(response);
-      res.send(JSON.stringify(response));
-    }
+    obtenerPeliculasAleatorias(resultado[0], res);
   });
+}
+
+function obtenerPeliculasAleatorias(resultado, res){
+  var actor = resultado.actor;
+  var director = resultado.director;
+  var genero = resultado.genero;
+  var nombreCompetencia = resultado.nombre;
+  var sentencia = crearSqlObtenerPeliculas(actor, director, genero);
+  var sql = "SELECT "+sentencia.select+" FROM "+sentencia.from+" where "+sentencia.where1+" and "+sentencia.where2+" ORDER BY rand() LIMIT 2";
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la consulta", error.message);
+      return res.status(404).send("Hubo un error en la consulta");
+    }
+    var response = {
+      'peliculas': resultado,
+      'competencia': nombreCompetencia
+    }
+    guardarPeliculaOfrecida(response);
+    res.send(JSON.stringify(response));
+  });
+}
+
+function crearSqlObtenerPeliculas(actor, director, genero){
+  var select = "pelicula.id, pelicula.poster, pelicula.titulo, actor.nombre, director.nombre, genero.nombre";
+  var from = "pelicula, actor, director, genero, actor_pelicula, director_pelicula";
+  var where1 = "actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and pelicula.genero_id = genero.id  and director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id";
+  var where2 = validarDatosCompetencia(actor, director, genero);
+  var sentencia = {
+    'select': select,
+    'from': from,
+    'where1': where1,
+    'where2': where2
+  }
+  return sentencia;
+}
+
+function validarDatosCompetencia(actor, director, genero){
+  if (actor != 0) {
+    if (director != 0) {
+      if (genero != 0) {
+        return " actor.id ="+actor+" and director.id = "+director+" and genero.id = "+genero;
+      }else {
+        return " actor.id ="+actor+" and director.id = "+director;
+      }
+    }else {
+      return " actor.id ="+actor;
+    }
+  }else if (director != 0) {
+    if (genero != 0) {
+      return " director.id = "+director+" and genero.id = "+genero;
+    }else {
+      return " director.id = "+director;
+    }
+  }else if (genero != 0) {
+    return " genero.id = "+genero;
+  }else {
+    return "";
+  }
 }
 
 function sumarVotoDePelicula(req, res){
@@ -51,7 +101,6 @@ conexion.query(sql, function(error, resultado, fields){
 
 function crearCompetencia(req, res){
   var datosRecibidos = req.body;
-  console.log(datosRecibidos);
   var nombreCompetencia = datosRecibidos.nombre;
   var actor = datosRecibidos.actor;
   var director = datosRecibidos.director;
@@ -77,7 +126,8 @@ function cargarDirectores(req, res){
 
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
-    obtenerPeliculasAleatorias: obtenerPeliculasAleatorias,
+    // obtenerPeliculasAleatorias: obtenerPeliculasAleatorias,
+    buscarCompentecia: buscarCompentecia,
     sumarVotoDePelicula: sumarVotoDePelicula,
     devolverResultadoVotacion: devolverResultadoVotacion,
     cargarGeneros: cargarGeneros,
@@ -117,18 +167,4 @@ function guardarPeliculaOfrecida(datosPelicula){
     }
   });
 
-}
-
-function buscarCompentecia(id, res){
-  var sql = "select * from competencia where id="+id;
-  conexion.query(sql, function(error, resultado, fields){
-    if (resultado.length == 0) {
-      competenciaSeleccionada = null;
-      console.log("La competencia no existe");
-      return res.status(404).send("La competencia no existe");
-
-    }else {
-      competenciaSeleccionada = resultado;
-    }
-  });
 }

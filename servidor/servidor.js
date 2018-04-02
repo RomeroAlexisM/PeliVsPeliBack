@@ -23,7 +23,7 @@ app.get('/actores', controlador.cargarActores);
 
 app.get('/directores', controlador.cargarDirectores);
 
-app.get('/competencias/:id/peliculas/', controlador.obtenerPeliculasAleatorias);
+app.get('/competencias/:id/peliculas/', controlador.buscarCompentecia);
 
 app.post('/competencias/:idCompetencia/voto', controlador.sumarVotoDePelicula);
 
