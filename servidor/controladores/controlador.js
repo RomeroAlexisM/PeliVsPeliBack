@@ -13,8 +13,67 @@ function buscarCompetencia(req, res){
       console.log("Hubo un error en la consulta", error.message);
       return res.status(404).send("Hubo un error en la consulta");
     }
-    res.send(JSON.stringify(respuesta));
+    buscarDatosDeCompetencia(idCompetencia, resultado[0], res);
   });
+}
+
+function buscarDatosDeCompetencia(idCompetencia, resultado, res){
+  var actor_id = resultado.actor_id;
+  var director_id = resultado.director_id;
+  var genero_id = resultado.genero_id;
+  var nombreCompetencia = resultado.nombre;
+  var sql = crearSqlBuscarDatosDeCompetencia(idCompetencia, actor_id, director_id, genero_id);
+
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la consulta", error.message);
+      return res.status(404).send("Hubo un error en la consulta");
+    }
+    res.send(JSON.stringify(resultado[0]));
+  });
+}
+
+function crearSqlBuscarDatosDeCompetencia(idCompetencia, actor_id, director_id, genero_id){
+  if (actor_id != null) {
+    if (director_id != null) {
+      if (genero_id != null) {
+        return "select competencia.nombre, actor.nombre as actor_nombre, director.nombre as director_nombre, genero.nombre as genero_nombre"+
+              " from competencia, actor, director, genero"+
+              " where competencia.actor_id = actor.id and competencia.director_id = director.id and"+
+              " competencia.genero_id = genero.id and competencia.id = "+idCompetencia;
+      }else {
+        return "select competencia.nombre, actor.nombre as actor_nombre, director.nombre as director_nombre"+
+              " from competencia, actor, director"+
+              " where competencia.actor_id = actor.id and competencia.director_id = director.id and"+
+              " competencia.id = "+idCompetencia;
+      }
+    }else {
+      return "select competencia.nombre, actor.nombre as actor_nombre"+
+            " from competencia, actor"+
+            " where competencia.actor_id = actor.id and"+
+            " competencia.id = "+idCompetencia;
+    }
+  }else if (director_id != null) {
+    if (genero_id != null) {
+      return "select competencia.nombre, director.nombre as director_nombre, genero.nombre as genero_nombre"+
+            " from competencia, director, genero"+
+            " where competencia.director_id = director.id and"+
+            " competencia.genero_id = genero.id and competencia.id = "+idCompetencia;
+    }else {
+      return "select competencia.nombre, director.nombre as director_nombre"+
+            " from competencia, director"+
+            " where competencia.director_id = director.id and"+
+            " competencia.id = "+idCompetencia;
+    }
+  }else if (genero_id != null) {
+    return "select competencia.nombre, genero.nombre as genero_nombre"+
+          " from competencia, genero"+
+          " where commpetencia.genero_id = genero.id and competencia.id = "+idCompetencia;
+  }else {
+    return "select competencia.nombre"+
+          " from competencia"+
+          " where competencia.id = "+idCompetencia;
+  }
 }
 
 function cargarCompetencia(req, res){
@@ -182,7 +241,8 @@ module.exports = {
     cargarActores: cargarActores,
     cargarDirectores: cargarDirectores,
     crearCompetencia: crearCompetencia,
-    reiniciarVotacion: reiniciarVotacion
+    reiniciarVotacion: reiniciarVotacion,
+    buscarCompetencia: buscarCompetencia
   }
 
   function cargarDatosEnBD(sql, res){

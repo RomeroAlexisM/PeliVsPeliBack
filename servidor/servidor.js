@@ -23,13 +23,13 @@ app.get('/actores', controlador.cargarActores);
 
 app.get('/directores', controlador.cargarDirectores);
 
-// app.get('/competencias/:id', controlador.buscarCompetencia);
-
 app.get('/competencias/:id/peliculas/', controlador.cargarCompetencia);
 
 app.post('/competencias/:idCompetencia/voto', controlador.sumarVotoDePelicula);
 
 app.get('/competencias/:id/resultados', controlador.devolverResultadoVotacion);
+
+app.get('/competencias/:id', controlador.buscarCompetencia);
 
 app.delete('/competencias/:idCompetencia/votos', controlador.reiniciarVotacion);
 
