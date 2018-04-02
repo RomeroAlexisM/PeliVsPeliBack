@@ -34,9 +34,9 @@ function buscarDatosDeCompetencia(idCompetencia, resultado, res){
 }
 
 function crearSqlBuscarDatosDeCompetencia(idCompetencia, actor_id, director_id, genero_id){
-  if (actor_id != null) {
-    if (director_id != null) {
-      if (genero_id != null) {
+  if (existeElActor(actor)) {
+    if (existeElDirector(director)) {
+      if (existeElGenero(genero)) {
         return "select competencia.nombre, actor.nombre as actor_nombre, director.nombre as director_nombre, genero.nombre as genero_nombre"+
               " from competencia, actor, director, genero"+
               " where competencia.actor_id = actor.id and competencia.director_id = director.id and"+
@@ -47,14 +47,19 @@ function crearSqlBuscarDatosDeCompetencia(idCompetencia, actor_id, director_id, 
               " where competencia.actor_id = actor.id and competencia.director_id = director.id and"+
               " competencia.id = "+idCompetencia;
       }
+    }else if (existeElGenero(genero)){
+      return "select competencia.nombre, actor.nombre as actor_nombre, genero.nombre as genero_nombre"+
+            " from competencia, actor, genero"+
+            " where competencia.actor_id = actor.id and "+
+            " competencia.genero_id = genero.id and competencia.id = "+idCompetencia;
     }else {
       return "select competencia.nombre, actor.nombre as actor_nombre"+
             " from competencia, actor"+
             " where competencia.actor_id = actor.id and"+
             " competencia.id = "+idCompetencia;
     }
-  }else if (director_id != null) {
-    if (genero_id != null) {
+  }else if (existeElDirector(director)) {
+    if (existeElGenero(genero)) {
       return "select competencia.nombre, director.nombre as director_nombre, genero.nombre as genero_nombre"+
             " from competencia, director, genero"+
             " where competencia.director_id = director.id and"+
@@ -65,7 +70,7 @@ function crearSqlBuscarDatosDeCompetencia(idCompetencia, actor_id, director_id, 
             " where competencia.director_id = director.id and"+
             " competencia.id = "+idCompetencia;
     }
-  }else if (genero_id != null) {
+}else if (existeElGenero(genero)) {
     return "select competencia.nombre, genero.nombre as genero_nombre"+
           " from competencia, genero"+
           " where commpetencia.genero_id = genero.id and competencia.id = "+idCompetencia;
@@ -190,6 +195,16 @@ function crearCompetencia(req, res){
   var actor = datosRecibidos.actor;
   var director = datosRecibidos.director;
   var genero = datosRecibidos.genero;
+  //cambiamos el valor de cero a null para poder utilizar los validadores
+  if (actor == 0) {
+    actor = null;
+  }
+  if (director == 0) {
+    director = null;
+  }
+  if (genero == 0) {
+    genero = null;
+  }
   var sql = crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero);
   cargarDatosEnBD(sql, res);
 }
@@ -202,6 +217,8 @@ function crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero){
       }else {
         return "INSERT INTO competencia (nombre, actor_id, director_id) VALUES ("+"'"+nombreCompetencia+"',"+actor+","+director+")";
       }
+    }else if (existeElGenero(genero)){
+      return "INSERT INTO competencia (nombre, genero_id, actor_id) VALUES ("+"'"+nombreCompetencia+"',"+genero+","+actor+")";
     }else {
       return "INSERT INTO competencia (nombre, actor_id) VALUES ("+"'"+nombreCompetencia+"',"+actor+")";
     }
