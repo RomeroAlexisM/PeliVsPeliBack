@@ -270,12 +270,12 @@ function guardarPeliculaOfrecida(datosPelicula){
   var idCompetencia = datosPelicula.competencia[0].id;
   var idPelicula1 = datosPelicula.peliculas[0].id;
   var idPelicula2 = datosPelicula.peliculas[1].id;
-  var sql = "INSERT INTO pelicula_ofrecida (competencia_id, pelicula1_id, pelicula2_id) VALUES ("+idCompetencia+", "+idPelicula1+","+idPelicula2+")";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la insercion de datos", error.message);
-    }
-  });
+  // var sql = "INSERT INTO pelicula_ofrecida (competencia_id, pelicula1_id, pelicula2_id) VALUES ("+idCompetencia+", "+idPelicula1+","+idPelicula2+")";
+  // conexion.query(sql, function(error, resultado, fields){
+  //   if(error){
+  //     console.log("aca Hubo un error en la insercion de datos", error.message);
+  //   }
+  // });
 }
 
 function existeElActor(actor){
