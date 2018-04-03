@@ -163,41 +163,6 @@ function crearSqlObtenerPeliculas(actor, director, genero){
   }
 }
 
-function sumarVotoDePelicula(req, res){
-  var idCompetencia = req.params.idCompetencia;
-  var idPelicula = req.body.idPelicula;
-  var sql = "INSERT INTO voto (competencia_id, pelicula_id) VALUES ("+idCompetencia+", "+idPelicula+")";
-  cargarDatosEnBD(sql, res);
-}
-
-function devolverResultadoVotacion(req, res){
-var idCompetencia = req.params.id;
-var sql= "select competencia.nombre, pelicula.id, pelicula.titulo, pelicula.poster, count(voto.pelicula_id) as votos from voto, pelicula, competencia where pelicula.id = voto.pelicula_id and competencia.id = voto.competencia_id and competencia.id = "+idCompetencia+" group by voto.pelicula_id  order by votos desc limit 3";
-conexion.query(sql, function(error, resultado, fields){
-  if(error){
-    console.log("Hubo un error en la consulta", error.message);
-    return res.status(404).send("Hubo un error en la consulta");
-  }
-  var response = {
-    'resultados': resultado,
-    'competencia': resultado[0].nombre
-  }
-  res.send(JSON.stringify(response));
-});
-}
-
-function reiniciarVotacion(req, res){
-  var idCompetencia = req.params.idCompetencia;
-  var sql = "DELETE voto FROM voto INNER JOIN competencia ON voto.competencia_id = competencia.id WHERE competencia.id = "+idCompetencia ;
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la eliminacion de datos", error.message);
-      return res.status(505).send("Hubo un error en la eliminacion de datos");
-    }
-    res.json(resultado);
-  });
-}
-
 function crearCompetencia(req, res){
   var datosRecibidos = req.body;
   var nombreCompetencia = datosRecibidos.nombre;
@@ -215,7 +180,7 @@ function crearCompetencia(req, res){
     genero = null;
   }
   var sql = crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero);
-  cargarDatosEnBD(sql, res);
+  manipularDatosEnBD(sql, res);
 }
 
 function crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero){
@@ -244,6 +209,48 @@ function crearSqlCrearCompetencia(nombreCompetencia, actor, director, genero){
   }
 }
 
+function eliminarCompetencia(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var sql = "UPDATE competencia SET estado = 0 WHERE competencia.id = "+idCompetencia;
+  manipularDatosEnBD(sql, res);
+}
+
+function editarCompetencia(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var nuevoNombre = req.body.nombre;
+  var sql = "UPDATE competencia SET nombre = '"+nuevoNombre+"' WHERE competencia.id = "+idCompetencia;
+  manipularDatosEnBD(sql, res);
+}
+
+function sumarVotoDePelicula(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var idPelicula = req.body.idPelicula;
+  var sql = "INSERT INTO voto (competencia_id, pelicula_id) VALUES ("+idCompetencia+", "+idPelicula+")";
+  manipularDatosEnBD(sql, res);
+}
+
+function devolverResultadoVotacion(req, res){
+var idCompetencia = req.params.id;
+var sql= "select competencia.nombre, pelicula.id, pelicula.titulo, pelicula.poster, count(voto.pelicula_id) as votos from voto, pelicula, competencia where pelicula.id = voto.pelicula_id and competencia.id = voto.competencia_id and competencia.id = "+idCompetencia+" group by voto.pelicula_id  order by votos desc limit 3";
+conexion.query(sql, function(error, resultado, fields){
+  if(error){
+    console.log("Hubo un error en la consulta", error.message);
+    return res.status(404).send("Hubo un error en la consulta");
+  }
+  var response = {
+    'resultados': resultado,
+    'competencia': resultado[0].nombre
+  }
+  res.send(JSON.stringify(response));
+});
+}
+
+function reiniciarVotacion(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var sql = "DELETE voto FROM voto INNER JOIN competencia ON voto.competencia_id = competencia.id WHERE competencia.id = "+idCompetencia ;
+  manipularDatosEnBD(sql, res);
+}
+
 function cargarGeneros(req, res){
   var sql = "Select * from genero";
   buscarDatosEnBD(sql, res);
@@ -259,30 +266,7 @@ function cargarDirectores(req, res){
   buscarDatosEnBD(sql, res);
 }
 
-function eliminarCompetencia(req, res){
-  var idCompetencia = req.params.idCompetencia;
-  var sql = "UPDATE competencia SET estado = 0 WHERE competencia.id = "+idCompetencia;
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la minipulacion de datos", error.message);
-      return res.status(505).send("Hubo un error en la manipulacion de datos");
-    }
-    res.json(resultado);
-  });
-}
 
-function editarCompetencia(req, res){
-  var idCompetencia = req.params.idCompetencia;
-  var nuevoNombre = req.body.nombre;
-  var sql = "UPDATE competencia SET nombre = '"+nuevoNombre+"' WHERE competencia.id = "+idCompetencia;
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la minipulacion de datos", error.message);
-      return res.status(505).send("Hubo un error en la manipulacion de datos");
-    }
-    res.json(resultado);
-  });
-}
 
 module.exports = {
     buscarTodasLasCompetencias: buscarTodasLasCompetencias,
@@ -299,11 +283,11 @@ module.exports = {
     editarCompetencia: editarCompetencia
   }
 
-  function cargarDatosEnBD(sql, res){
+  function manipularDatosEnBD(sql, res){
     conexion.query(sql, function(error, resultado, fields){
       if(error){
-        console.log("Hubo un error en la insercion de datos", error.message);
-        return res.status(505).send("Hubo un error en la insercion de datos");
+        console.log("Hubo un error en la manipulacion de datos", error.message);
+        return res.status(505).send("Hubo un error en la manipulacion de datos");
       }
       res.json(resultado);
     });
