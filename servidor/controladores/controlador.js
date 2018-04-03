@@ -114,6 +114,7 @@ function obtenerPeliculasAleatorias(resultado, res){
 
 function crearSqlObtenerPeliculas(actor, director, genero){
   var sql = " SELECT pelicula.id, pelicula.poster, pelicula.titulo ";
+  var seleccionAleatoria = " ORDER BY rand() LIMIT 2"
   if (existeElActor(actor)) {
     if (existeElDirector(director)) {
       if (existeElGenero(genero)) {
@@ -121,45 +122,45 @@ function crearSqlObtenerPeliculas(actor, director, genero){
               " FROM pelicula, actor, director, genero, actor_pelicula, director_pelicula"+
               " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
               " pelicula.genero_id = genero.id  and director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and"+
-              " actor.id ="+actor+" and director.id = "+director+" and genero.id = "+genero;
+              " actor.id ="+actor+" and director.id = "+director+" and genero.id = "+genero + seleccionAleatoria;
       }else {
         return sql + ", actor.nombre, director.nombre"+
               " FROM pelicula, actor, director, actor_pelicula, director_pelicula"+
               " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
               " director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and"+
-              " actor.id ="+actor+" and director.id = "+director;
+              " actor.id ="+actor+" and director.id = "+director + seleccionAleatoria;
       }
     }else if (existeElGenero(genero)) {
       return sql + ", actor.nombre, genero.nombre"+
             " FROM pelicula, actor, genero, actor_pelicula"+
             " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
             " pelicula.genero_id = genero.id"+
-            " actor.id ="+actor+" and genero.id = "+genero;
+            " actor.id ="+actor+" and genero.id = "+genero + seleccionAleatoria;
     }else {
       return sql + ", actor.nombre"+
             " FROM pelicula, actor, actor_pelicula"+
             " WHERE actor_pelicula.actor_id =actor.id and actor_pelicula.pelicula_id = pelicula.id and"+
-            " actor.id ="+actor;
+            " actor.id ="+actor + seleccionAleatoria;
     }
   }else if (existeElDirector(director)) {
     if (existeElGenero(genero)) {
       return sql + ", director.nombre, genero.nombre"+
             " FROM pelicula, director, genero, director_pelicula"+
             " WHERE pelicula.genero_id = genero.id  and director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and"+
-            " director.id = "+director+" and genero.id = "+genero;
+            " director.id = "+director+" and genero.id = "+genero + seleccionAleatoria;
     }else {
       return sql + ", director.nombre"+
             " FROM pelicula, director, director_pelicula"+
             " WHERE director_pelicula.director_id = director.id and director_pelicula.pelicula_id= pelicula.id and "+
-            " director.id = "+director;
+            " director.id = "+director + seleccionAleatoria;
     }
   }else if (existeElGenero(genero)) {
     return sql + ", genero.nombre"+
-          " FROM pelicula, genero,"+
+          " FROM pelicula, genero"+
           " WHERE pelicula.genero_id = genero.id and"+
-          " genero.id = "+genero;
+          " genero.id = "+genero + seleccionAleatoria;
   }else {
-    return sql + "FROM pelicula";
+    return sql + "FROM pelicula" + seleccionAleatoria;
   }
 }
 
