@@ -310,64 +310,66 @@ function guardarPeliculaOfrecida(datosPelicula, competencia_id){
   });
 }
 
-function devolverResultadoVotacion(req, res){
-  var idCompetencia = req.params.id;
-  var sql = "select competencia.nombre, pelicula.id, pelicula.titulo, pelicula.poster,"+
-          " count(voto.pelicula_id) as votos from voto, pelicula, competencia where pelicula.id = voto.pelicula_id"+
-          " and competencia.id = voto.competencia_id and competencia.id = "+idCompetencia+
-          " group by voto.pelicula_id  order by votos desc limit 3";
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
-    }
-    for (var i = 0; i < resultado.length; i++) {
-      calcularVotos(idCompetencia, resultado[i], res);
-    }
-  });
-}
-
-function calcularVotos(idCompetencia, datosVotacion, res){
-  var idPelicula = datosVotacion.id;
-  var votos = datosVotacion.votos;
-  var nombreCompetencia = datosVotacion.nombre;
-  var sql = "SELECT COUNT(pelicula_id) AS apariciones FROM  pelicula_ofrecida, competencia WHERE pelicula_ofrecida.competencia_id = competencia.id AND pelicula_id = "+idPelicula+" AND competencia.id = "+idCompetencia;
-  conexion.query(sql, function(error, resultado, fields){
-    if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
-    }
-    //consulta de las apariciones de la pelicula en la competencia
-    var apariciones = resultado[0].apariciones;
-    //se divide la cantidad de votos de la pelicula por las apariciones que tuvo y se redondea el resultado
-    var votosReales = Math.round((votos/resultado[0].apariciones)*10);
-
-    var response = {
-      'resultados': datosVotacion,
-      'competencia': nombreCompetencia
-    }
-    res.send(JSON.stringify(response));
-  });
-}
-
 // function devolverResultadoVotacion(req, res){
-// var idCompetencia = req.params.id;
-// var sql= "select competencia.nombre, pelicula.id, pelicula.titulo, pelicula.poster,"+
-//         " count(voto.pelicula_id) as votos from voto, pelicula, competencia where pelicula.id = voto.pelicula_id"+
-//         " and competencia.id = voto.competencia_id and competencia.id = "+idCompetencia+
-//         " group by voto.pelicula_id  order by votos desc limit 3";
-// conexion.query(sql, function(error, resultado, fields){
-//   if(error){
-//     console.log("Hubo un error en la consulta", error.message);
-//     return res.status(404).send("Hubo un error en la consulta");
-//   }
-//   var response = {
-//     'resultados': resultado,
-//     'competencia': resultado[0].nombre
-//   }
-//   res.send(JSON.stringify(response));
-// });
+//   var idCompetencia = req.params.id;
+//   var sql = "select competencia.nombre, pelicula.id, pelicula.titulo, pelicula.poster,"+
+//           " count(voto.pelicula_id) as votos from voto, pelicula, competencia where pelicula.id = voto.pelicula_id"+
+//           " and competencia.id = voto.competencia_id and competencia.id = "+idCompetencia+
+//           " group by voto.pelicula_id  order by votos desc limit 3";
+//   conexion.query(sql, function(error, resultado, fields){
+//     if(error){
+//       console.log("Hubo un error en la consulta", error.message);
+//       return res.status(404).send("Hubo un error en la consulta");
+//     }
+//     for (var i = 0; i < resultado.length; i++) {
+//       calcularVotos(idCompetencia, resultado[i], res);
+//       console.log("primero");
+//     }
+//   });
 // }
+//
+// function calcularVotos(idCompetencia, datosVotacion, res){
+//   var idPelicula = datosVotacion.id;
+//   var votos = datosVotacion.votos;
+//   var nombreCompetencia = datosVotacion.nombre;
+//   var sql = "SELECT COUNT(pelicula_id) AS apariciones FROM  pelicula_ofrecida, competencia WHERE pelicula_ofrecida.competencia_id = competencia.id AND pelicula_id = "+idPelicula+" AND competencia.id = "+idCompetencia;
+//   conexion.query(sql, function(error, resultado, fields){
+//     if(error){
+//       console.log("Hubo un error en la consulta", error.message);
+//       return res.status(404).send("Hubo un error en la consulta");
+//     }
+//     //consulta de las apariciones de la pelicula en la competencia
+//     var apariciones = resultado[0].apariciones;
+//     //se divide la cantidad de votos de la pelicula por las apariciones que tuvo y se redondea el resultado
+//     var votosReales = Math.round((votos/resultado[0].apariciones)*10);
+//
+//     var response = {
+//       'resultados': datosVotacion,
+//       'competencia': nombreCompetencia
+//     }
+//     console.log("segundo");
+//     res.send(JSON.stringify(response));
+//   });
+// }
+
+function devolverResultadoVotacion(req, res){
+var idCompetencia = req.params.id;
+var sql= "select competencia.nombre, pelicula.id, pelicula.titulo, pelicula.poster,"+
+        " count(voto.pelicula_id) as votos from voto, pelicula, competencia where pelicula.id = voto.pelicula_id"+
+        " and competencia.id = voto.competencia_id and competencia.id = "+idCompetencia+
+        " group by voto.pelicula_id  order by votos desc limit 3";
+conexion.query(sql, function(error, resultado, fields){
+  if(error){
+    console.log("Hubo un error en la consulta", error.message);
+    return res.status(404).send("Hubo un error en la consulta");
+  }
+  var response = {
+    'resultados': resultado,
+    'competencia': resultado[0].nombre
+  }
+  res.send(JSON.stringify(response));
+});
+}
 
 function existeElActor(actor){
   return (actor != null);
