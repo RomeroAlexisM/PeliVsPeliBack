@@ -248,6 +248,7 @@ function devolverResultadoVotacion(req, res){
         'competencia': resultado[0].nombre,
       }
       res.send(JSON.stringify(response));
+    }
   });
 }
 

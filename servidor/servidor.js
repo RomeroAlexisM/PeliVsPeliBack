@@ -41,8 +41,9 @@ app.delete('/competencias/:idCompetencia', controlador.eliminarCompetencia);
 
 
 //seteamos el puerto en el cual va a escuchar los pedidos la aplicación
-var puerto = '8080';
+var puerto = 8080,
+      id = '127.0.0.1'
 
-app.listen(puerto, function () {
-  console.log( "Escuchando en el puerto " + puerto );
+app.listen(puerto, id, function () {
+  console.log( "Escuchando en el id: "+id+" y el puerto: " + puerto );
 });
