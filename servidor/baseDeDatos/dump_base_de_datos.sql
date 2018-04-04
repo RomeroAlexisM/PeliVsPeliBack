@@ -109,7 +109,7 @@ CREATE TABLE `competencia` (
   FOREIGN KEY (`actor_id`) REFERENCES `actor` (`id`),
   FOREIGN KEY (`director_id`) REFERENCES `director` (`id`),
   FOREIGN KEY (`genero_id`) REFERENCES `genero` (`id`)
-)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `voto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -118,4 +118,4 @@ CREATE TABLE `voto` (
   PRIMARY KEY (`id`),
   FOREIGN KEY (`competencia_id`) REFERENCES `competencia` (`id`),
   FOREIGN KEY (`pelicula_id`) REFERENCES `pelicula` (`id`)
-)
+)ENGINE=InnoDB DEFAULT CHARSET=latin1;
