@@ -104,11 +104,23 @@ function obtenerPeliculasAleatorias(resultado, res){
       console.log("Hubo un error en la consulta", error.message);
       return res.status(404).send("Hubo un error en la consulta");
     }
+    for (var i = 0; i < resultado.length; i++) {
+        guardarPeliculaOfrecida(competencia_id, resultado[i].id);
+    }
     var response = {
       'peliculas': resultado,
       'competencia': nombreCompetencia
     }
     res.send(JSON.stringify(response));
+  });
+}
+
+function guardarPeliculaOfrecida(idCompetencia, idPelicula){
+  var sql = "INSERT INTO pelicula_ofrecida (competencia_id, pelicula_id) VALUES ("+idCompetencia+","+idPelicula+")";
+  conexion.query(sql, function(error, resultado, fields){
+    if(error){
+      console.log("Hubo un error en la manipulacion de datos", error.message);
+    }
   });
 }
 
