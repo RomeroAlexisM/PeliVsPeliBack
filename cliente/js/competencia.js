@@ -10,8 +10,15 @@ function CompetenciasController () {
 
 		// Se obtiene de la api el listado de competencias
 		$.getJSON(server+"/competencias", function (data) {
+			//se verifica que existan al menos dos competencias
+			if (data.length >= 2) {
 				// Se carga la información obtenida en el DOM
 				self.cargarCompetencias(data);
+			}else {
+				//si no existen se redirecciona a crear compentecia
+				location.href ="../html/administrar/crear.html";
+			}
+
 		 });
 	},
 
@@ -174,7 +181,6 @@ function CompetenciasController () {
 		$("#nombreCompetencia").text(data.competencia);
 		// Se recorren los resultados (data es un array)
 		for (var i = 0; i < data.resultados.length; i++) {
-			console.log((data.resultados)[i].votos);
 			// Se selecciona el div que contiene la estructura donde cargar el resultado actual
 			var divResultado = "#puesto"+(i+1);
 			// Se carga el valor de pelicula_id obtenido de la opción actual en el objeto con clase idPelicula que se encuentra dentro del divResultado

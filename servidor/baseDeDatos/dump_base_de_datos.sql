@@ -111,6 +111,11 @@ CREATE TABLE `competencia` (
   FOREIGN KEY (`genero_id`) REFERENCES `genero` (`id`)
 )ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+LOCK TABLES `competencia` WRITE;
+INSERT INTO `competencia` (`nombre`, `genero_id`) VALUES ('¿Cúal es la mejor comedia?',5);
+INSERT INTO `competencia` (`nombre`, `actor_id`) VALUES('Mejor pelicula de George Clooney',683);
+UNLOCK TABLES;
+
 CREATE TABLE `voto` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `competencia_id` int(11) NOT NULL,

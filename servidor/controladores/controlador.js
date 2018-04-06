@@ -10,8 +10,8 @@ function buscarCompetencia(req, res){
   var sql = "SELECT * FROM competencia WHERE id="+idCompetencia;
   conexion.query(sql, function(error, resultado, fields){
     if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
+      console.log("La informacion solicitada no ha sido encotrada", error.message);
+      return res.status(404).send("La informacion solicitada no ha sido encotrada");
     }
     buscarDatosDeCompetencia(idCompetencia, resultado[0], res);
   });
@@ -25,8 +25,8 @@ function buscarDatosDeCompetencia(idCompetencia, resultado, res){
   var sql = crearSqlBuscarDatosDeCompetencia(idCompetencia, actor_id, director_id, genero_id);
   conexion.query(sql, function(error, resultado, fields){
     if(error){
-      console.log("aca Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
+      console.log("La informacion solicitada no ha sido encotrada", error.message);
+      return res.status(404).send("La informacion solicitada no ha sido encotrada");
     }
     res.send(JSON.stringify(resultado[0]));
   });
@@ -85,8 +85,8 @@ function cargarCompetencia(req, res){
   var sql = "SELECT * FROM competencia WHERE id="+idCompetencia;
   conexion.query(sql, function(error, resultado, fields){
     if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
+      console.log("La informacion solicitada no ha sido encotrada", error.message);
+      return res.status(500).send("La informacion solicitada no ha sido encotrada");
     }
     obtenerPeliculasAleatorias(resultado[0], res);
   });
@@ -101,8 +101,8 @@ function obtenerPeliculasAleatorias(resultado, res){
   var sql = crearSqlObtenerPeliculas(actor, director, genero);
   conexion.query(sql, function(error, resultado, fields){
     if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
+      console.log("La informacion solicitada no ha sido encotrada", error.message);
+      return res.status(500).send("La informacion solicitada no ha sido encotrada")
     }
     for (var i = 0; i < resultado.length; i++) {
         guardarPeliculaOfrecida(competencia_id, resultado[i].id);
@@ -249,10 +249,15 @@ function devolverResultadoVotacion(req, res){
             " AND voto.competencia_id = "+idCompetencia+" GROUP BY voto.pelicula_id";
   conexion.query(sql, function(error, resultado, fields){
     if(error){
-      console.log("Hubo un error en la consulta", error.message);
-      return res.status(404).send("Hubo un error en la consulta");
+      console.log("La informacion solicitada no ha sido encotrada", error.message);
+      return res.status(500).send("La informacion solicitada no ha sido encotrada")
     }
+    if (resultado.length != 0) {
       calcularVotos(idCompetencia, resultado, res);
+    }else {
+      res.status(404).send("No existen peliuclas votadas");
+    }
+
   });
 }
 
@@ -273,7 +278,7 @@ function calcularVotos(idCompetencia, datosPeliculas, res){
       if (datosPeliculas[i].pelicula_id != null) {
         if (resultado[i].pelicula_id == datosPeliculas[i].pelicula_id) {
         resultados[i] ={
-          'votos':  Math.round((datosPeliculas[i].votos/resultado[i].apariciones)*10),//Se divide la cantidad de votos con respecto a las apariciones de la pelicula
+          'votos':  Math.round((datosPeliculas[i].votos/(resultado[i].apariciones/datosPeliculas[i].votos))*10),//Se divide la cantidad de votos con respecto a las apariciones de la pelicula
           'pelicula_id': resultado[i].pelicula_id,
           'poster': resultado[i].poster,
           'titulo': resultado[i].titulo
@@ -356,8 +361,8 @@ module.exports = {
   function buscarDatosEnBD(sql, res){
     conexion.query(sql, function(error, resultado, fields){
       if(error){
-        console.log("Hubo un error en la consulta", error.message);
-        return res.status(404).send("Hubo un error en la consulta");
+        console.log("La informacion solicitada no ha sido encontrada", error.message);
+        return res.status(404).send("La informacion solicitada no ha sido encontrada");
       }
       res.send(JSON.stringify(resultado));
     });
