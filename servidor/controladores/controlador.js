@@ -270,6 +270,7 @@ function calcularVotos(idCompetencia, datosPeliculas, res){
       return res.status(404).send("Hubo un error en la consulta");
     }
     for (var i = 0; i < resultado.length; i++) {
+      if (datosPeliculas[i].pelicula_id != null) {
         if (resultado[i].pelicula_id == datosPeliculas[i].pelicula_id) {
         resultados[i] ={
           'votos':  Math.round((datosPeliculas[i].votos/resultado[i].apariciones)*10),//Se divide la cantidad de votos con respecto a las apariciones de la pelicula
@@ -279,6 +280,7 @@ function calcularVotos(idCompetencia, datosPeliculas, res){
         }
         totalDePeliculas ++;
         }
+      }
     }
     if (resultado.length == totalDePeliculas) {
       //ordena el objeto resutlados de mayor a menos
@@ -298,8 +300,14 @@ function reiniciarVotacion(req, res){
   var idCompetencia = req.params.idCompetencia;
   var sql = "DELETE voto FROM voto INNER JOIN competencia ON voto.competencia_id = competencia.id WHERE competencia.id = "+idCompetencia ;
   manipularDatosEnBD(sql, res);
-  // var sql = "DELETE pelicula_ofrecida FROM pelicula_ofrecida INNER JOIN competencia ON pelicula_ofrecida.competencia_id = competencia.id WHERE competencia.id = "+idCompetencia ;
-  // manipularDatosEnBD(sql, res);
+}
+
+function reiniciarVotacion2(req, res){
+  var idCompetencia = req.params.idCompetencia;
+  var sql = "DELETE pelicula_ofrecida FROM pelicula_ofrecida"+
+        " INNER JOIN competencia ON pelicula_ofrecida.competencia_id = competencia.id"+
+        " WHERE competencia.id = "+idCompetencia ;
+  manipularDatosEnBD(sql, res);
 }
 
 function cargarGeneros(req, res){
@@ -331,7 +339,8 @@ module.exports = {
     reiniciarVotacion: reiniciarVotacion,
     buscarCompetencia: buscarCompetencia,
     eliminarCompetencia: eliminarCompetencia,
-    editarCompetencia: editarCompetencia
+    editarCompetencia: editarCompetencia,
+    reiniciarVotacion2: reiniciarVotacion2
   }
 
   function manipularDatosEnBD(sql, res){

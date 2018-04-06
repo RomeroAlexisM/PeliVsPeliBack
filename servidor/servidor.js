@@ -36,6 +36,8 @@ app.put('/competencias/:idCompetencia', controlador.editarCompetencia);
 
 app.delete('/competencias/:idCompetencia/votos', controlador.reiniciarVotacion);
 
+app.delete('/competenciasApariciones/:idCompetencia/votos', controlador.reiniciarVotacion2);
+
 app.delete('/competencias/:idCompetencia', controlador.eliminarCompetencia);
 
 

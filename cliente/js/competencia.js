@@ -174,6 +174,7 @@ function CompetenciasController () {
 		$("#nombreCompetencia").text(data.competencia);
 		// Se recorren los resultados (data es un array)
 		for (var i = 0; i < data.resultados.length; i++) {
+			console.log((data.resultados)[i].votos);
 			// Se selecciona el div que contiene la estructura donde cargar el resultado actual
 			var divResultado = "#puesto"+(i+1);
 			// Se carga el valor de pelicula_id obtenido de la opción actual en el objeto con clase idPelicula que se encuentra dentro del divResultado
